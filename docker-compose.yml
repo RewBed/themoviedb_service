@@ -1,0 +1,16 @@
+services:
+  
+  films_service:
+    build: .
+    container_name: films_service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - "${REST_PORT}:${REST_PORT}"
+      - "${GRPC_PORT}:${REST_PORT}"
+
+volumes:
+  postgres_data:
