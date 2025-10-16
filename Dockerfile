@@ -15,9 +15,6 @@ RUN npm ci
 # Копируем весь исходный код
 COPY . .
 
-# Генерация Prisma клиента
-RUN npx prisma generate
-
 # Генерация ts-proto файлов
 RUN npx protoc \
     --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto \
