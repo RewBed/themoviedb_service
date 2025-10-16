@@ -1,11 +1,16 @@
 import axios, { AxiosInstance } from 'axios';
+import https from 'https';
 
 export class TmdbApiClient {
   private client: AxiosInstance;
 
   constructor(apiToken: string, private language = 'ru-RU') {
+
+    const agent = new https.Agent({ family: 4 }); // IPv4
+
     this.client = axios.create({
       baseURL: 'https://api.themoviedb.org/3',
+      httpsAgent: agent,
       headers: {
         Authorization: `Bearer ${apiToken}`,
         accept: 'application/json',
