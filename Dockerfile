@@ -1,50 +1,38 @@
-# -------------------------------
-# Stage 1: сборка
-# -------------------------------
+# 1️⃣ Билд-этап
 FROM node:20-alpine AS builder
-
-# Рабочая директория
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
+# 2️⃣ Копируем package.json и ставим зависимости
 COPY package*.json ./
-
-# Устанавливаем зависимости
 RUN npm ci
 
-# Копируем весь исходный код
+# 3️⃣ Копируем код
 COPY . .
 
-# Генерация ts-proto файлов
+# 5️⃣ Генерируем ts-proto файлы
 RUN npx protoc \
     --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto \
     --ts_proto_out=./ \
     --ts_proto_opt=nestJs=true,addGrpcMetadata=true,outputServices=grpc-js \
     src/proto/*.proto
 
-# Сборка TypeScript
+# 6️⃣ Собираем TypeScript
 RUN npm run build
 
-# Копируем proto файлы в dist для prod
-RUN mkdir -p dist/proto && cp src/proto/*.proto dist/proto/
 
-# -------------------------------
-# Stage 2: runtime
-# -------------------------------
-FROM node:20-alpine AS runtime
-
+# 7️⃣ Runtime-этап
+FROM node:20-alpine
 WORKDIR /app
 
-# Копируем package.json и node_modules только для prod
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-# Копируем билд и proto файлы из stage 1
+# 8️⃣ Копируем необходимые части из builder-а
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/proto ./src/proto
 
-# Открываем порты REST и gRPC
+# 🔟 Выполняем миграции при запуске и стартуем приложение
+CMD node dist/src/main.js
+
+# Порты
 EXPOSE 3000
 EXPOSE 50051
-
-# Команда запуска prod
-CMD ["node", "dist/src/main.js"]
