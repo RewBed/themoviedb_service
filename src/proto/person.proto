@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package films;
+
+message Person {
+  int32 themoviedb_id = 1; // уникальный идентификатор из TMDB
+  string name = 2;
+  string biography = 3;
+  string birthday = 4;
+  string deathday = 5;
+  int32 gender = 6;
+  string known_for_department = 7;
+  string place_of_birth = 8;
+  string profile_path = 9;
+  string homepage = 10;
+  float popularity = 11;
+  string imdb_id = 12;
+  bool adult = 13;
+  repeated string also_known_as = 14;
+}
+
+message PersonResponse {
+  int32 id = 1;
+}
+
+message LinkPersonToFilmRequest {
+  int32 person_id = 1;
+  int32 film_id = 2;
+}
+
+message LinkPersonToFilmResponse {
+  bool success = 1;
+}
+
+service PersonService {
+  rpc UpsertPerson(Person) returns (PersonResponse);
+  rpc LinkPersonToFilm(LinkPersonToFilmRequest) returns (LinkPersonToFilmResponse);
+}

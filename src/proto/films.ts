@@ -70,13 +70,6 @@ export interface FullFilmData {
 
 export interface FilmResponse {
   id: number;
-  title: string;
-  originalTitle: string;
-  isNew: boolean;
-  upsertCode: number;
-  upsertString: string;
-  createdAt: Timestamp | undefined;
-  updatedAt: Timestamp | undefined;
 }
 
 export const FILMS_PACKAGE_NAME = "films";
@@ -643,43 +636,13 @@ export const FullFilmData: MessageFns<FullFilmData> = {
 };
 
 function createBaseFilmResponse(): FilmResponse {
-  return {
-    id: 0,
-    title: "",
-    originalTitle: "",
-    isNew: false,
-    upsertCode: 0,
-    upsertString: "",
-    createdAt: undefined,
-    updatedAt: undefined,
-  };
+  return { id: 0 };
 }
 
 export const FilmResponse: MessageFns<FilmResponse> = {
   encode(message: FilmResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.id !== 0) {
       writer.uint32(8).int32(message.id);
-    }
-    if (message.title !== "") {
-      writer.uint32(18).string(message.title);
-    }
-    if (message.originalTitle !== "") {
-      writer.uint32(26).string(message.originalTitle);
-    }
-    if (message.isNew !== false) {
-      writer.uint32(32).bool(message.isNew);
-    }
-    if (message.upsertCode !== 0) {
-      writer.uint32(40).int32(message.upsertCode);
-    }
-    if (message.upsertString !== "") {
-      writer.uint32(50).string(message.upsertString);
-    }
-    if (message.createdAt !== undefined) {
-      Timestamp.encode(message.createdAt, writer.uint32(58).fork()).join();
-    }
-    if (message.updatedAt !== undefined) {
-      Timestamp.encode(message.updatedAt, writer.uint32(66).fork()).join();
     }
     return writer;
   },
@@ -697,62 +660,6 @@ export const FilmResponse: MessageFns<FilmResponse> = {
           }
 
           message.id = reader.int32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.title = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.originalTitle = reader.string();
-          continue;
-        }
-        case 4: {
-          if (tag !== 32) {
-            break;
-          }
-
-          message.isNew = reader.bool();
-          continue;
-        }
-        case 5: {
-          if (tag !== 40) {
-            break;
-          }
-
-          message.upsertCode = reader.int32();
-          continue;
-        }
-        case 6: {
-          if (tag !== 50) {
-            break;
-          }
-
-          message.upsertString = reader.string();
-          continue;
-        }
-        case 7: {
-          if (tag !== 58) {
-            break;
-          }
-
-          message.createdAt = Timestamp.decode(reader, reader.uint32());
-          continue;
-        }
-        case 8: {
-          if (tag !== 66) {
-            break;
-          }
-
-          message.updatedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
       }

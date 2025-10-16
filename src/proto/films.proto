@@ -75,13 +75,6 @@ message FullFilmData {
 
 message FilmResponse {
   int32 id = 1;
-  string title = 2;
-  string original_title = 3;
-  bool is_new = 4;
-  int32 upsert_code = 5;
-  string upsert_string = 6;
-  google.protobuf.Timestamp createdAt = 7;
-  google.protobuf.Timestamp updatedAt = 8;
 }
 
 // ----------------------
