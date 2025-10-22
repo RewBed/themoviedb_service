@@ -5,14 +5,14 @@ import { FullFilmData, FilmsServiceClient } from 'src/proto/films';
 
 @Injectable()
 export class MovieListService implements OnModuleInit {
-  private tmdb: TmdbApiClient;
-  private filmsServiceClient: FilmsServiceClient;
+  public tmdb: TmdbApiClient;
+  public filmsServiceClient: FilmsServiceClient;
 
   constructor(
-    @Inject('FILMS_SERVICE') private readonly client: ClientGrpc, // gRPC клиент через DI
+    @Inject('FILMS_SERVICE') public readonly client: ClientGrpc, // gRPC клиент через DI
   ) {
     this.tmdb = new TmdbApiClient(
-      process.env.TMDB_API_TOKEN || '',
+      process.env.TMDB_API_KEY || '',
       'ru-RU',
     );
   }
@@ -21,7 +21,7 @@ export class MovieListService implements OnModuleInit {
     this.filmsServiceClient = this.client.getService<FilmsServiceClient>('FilmsService');
   }
 
-  private mapMovieToFullFilmData(item: any): FullFilmData {
+  public mapMovieToFullFilmData(item: any): FullFilmData {
     const releaseDate = item?.release_date
     ? { seconds: Math.floor(new Date(item.release_date).getTime() / 1000), nanos: 0 }
     : undefined;

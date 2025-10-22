@@ -2,24 +2,29 @@ import { Module } from '@nestjs/common';
 import { MovieListService } from './movie_list.service';
 import { MovieListController } from './movie_list.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService, ConfigModule } from '@nestjs/config';
 import * as path from 'path';
 
 @Module({
   imports: [
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
-        name: 'FILMS_SERVICE', // токен, который будем использовать в @Inject
-        transport: Transport.GRPC,
-        options: {
-          package: 'films', // package из proto
-          protoPath: path.join(process.cwd(), 'src', 'proto', 'films.proto'), // путь к .proto
-          url: process.env.FILMS_GRPC_URL || '127.0.0.1:50057', // адрес gRPC сервиса
-        },
+        name: 'FILMS_SERVICE',
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'films',
+            protoPath: path.join(process.cwd(), 'src', 'proto', 'films.proto'),
+            url: configService.get<string>('FILMS_GRPC_URL'),
+          },
+        }),
       },
     ]),
   ],
   providers: [MovieListService],
   controllers: [MovieListController],
-  exports: [MovieListService], // если сервис будет использоваться в других модулях
+  exports: [MovieListService],
 })
 export class MovieListModule {}

@@ -8,6 +8,28 @@ services:
       - .env
     ports:
       - "${REST_PORT}:${REST_PORT}"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    depends_on: 
+      - redis
+    profiles:
+      - default
+  
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis_data:/data
+    profiles:
+      - redis-only
+      - default
+
+#networks:
+#  films-net-v1:
+#    - name: films-net-v1
 
 volumes:
-  postgres_data:
+  redis_data:

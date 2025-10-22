@@ -34,21 +34,9 @@ export class TmdbApiClient {
     }>('movie/top_rated', { page, language: this.language });
   }
 
-  /*
-  // Получить популярные фильмы (popular)
-  async getPopular(page = 1) {
-    return this.get('movie/popular', { page, language: this.language });
-  }
-    */
-
   // Получить детали конкретного фильма по ID
   async getMovieDetails(movieId: number) {
     return this.get(`movie/${movieId}`, { language: this.language });
   }
-
-  // Пример: поиск фильма
-  /* async searchMovie(query: string, page = 1) {
-    return this.get('search/movie', { query, page, language: this.language });
-  } */
   
 }
